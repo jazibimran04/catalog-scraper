@@ -46,4 +46,4 @@ if __name__ == "__main__":
     test_clean_text()
     test_resolve_url()
     test_deduplicate()
-    print("\n✅ All tests passed!")
+    print("\n All tests passed!")
