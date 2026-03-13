@@ -19,16 +19,8 @@ def safe_get(url, retries=3):
     return None
 
 def resolve_url(relative_url, base=BASE_URL):
-    """
-    Fix: properly resolves ALL relative URLs including:
-    - product links
-    - image URLs
-    - pagination links
-    - category/subcategory pages
-    """
     if not relative_url:
         return None
-    # Already an absolute URL
     if relative_url.startswith("http"):
         return relative_url
     return urljoin(base, relative_url)
@@ -48,14 +40,21 @@ def clean_price(price_text):
         return None
 
 def deduplicate(products):
+    """
+    Fix: removes duplicate products by URL.
+    Also tracks how many were removed per subcategory.
+    """
     seen_urls = set()
     unique = []
     duplicates_removed = 0
+
     for product in products:
-        url = product.get("product_url", "")
+        url = product.get("product_url", "").strip().rstrip("/")
         if url and url not in seen_urls:
             seen_urls.add(url)
             unique.append(product)
         elif url:
             duplicates_removed += 1
+            print(f"  [DEDUP] Duplicate removed: {url}")
+
     return unique, duplicates_removed
