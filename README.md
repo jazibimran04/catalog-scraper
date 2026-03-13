@@ -50,11 +50,11 @@ I followed the required branching workflow step by step:
 
 1. Created the repository with `main`
 2. Created `dev` branch from main
-3. Created `feature/catalog-navigation` — wrote the crawler that finds categories, subcategories, and handles pagination
-4. Created `feature/product-details` — wrote the parser that opens each product page and extracts data
+3. Created `feature/catalog-navigation` 
+4. Created `feature/product-details` 
 5. Merged both feature branches into `dev`
-6. Created `fix/url-resolution` — fixed how relative URLs are joined properly
-7. Created `fix/deduplication` — improved the duplicate removal logic
+6. Created `fix/url-resolution` 
+7. Created `fix/deduplication` 
 8. Merged both fix branches into `dev`
 9. After testing, merged `dev` into `main`
 
