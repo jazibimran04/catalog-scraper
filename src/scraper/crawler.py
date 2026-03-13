@@ -16,20 +16,21 @@ def discover_categories(base_url=BASE_URL):
         return []
 
     categories = []
-    nav = soup.find("ul", class_="nav")
+
+    # Categories are inside <ul class="nav flex-column">
+    nav = soup.find("ul", class_="flex-column")
     if not nav:
-        print("  [WARN] Could not find nav sidebar.")
+        print("  [WARN] Could not find category nav.")
         return []
 
-    for li in nav.find_all("li", recursive=False):
-        a_tag = li.find("a")
-        if not a_tag:
-            continue
-        name = a_tag.get_text(strip=True)
-        href = a_tag.get("href", "")
-        url = resolve_url(href)
-        if url and name:
-            categories.append({"name": name, "url": url})
+    for a in nav.find_all("a", href=True):
+        href = a.get("href", "")
+        name = a.get_text(strip=True)
+        # Only grab top-level category links (computers, phones)
+        if "e-commerce/static" in href and href != "/test-sites/e-commerce/static":
+            url = resolve_url(href)
+            if url and name:
+                categories.append({"name": name, "url": url})
 
     print(f"  [CRAWLER] Found {len(categories)} categories.")
     return categories
@@ -42,32 +43,25 @@ def discover_subcategories(category):
     print(f"  [CRAWLER] Looking for subcategories in: {cat_name}")
     soup = get_soup(cat_url)
     if not soup:
-        return [category]
-
-    subcategories = []
-    nav = soup.find("ul", class_="nav")
-    if not nav:
         return [{"name": cat_name, "url": cat_url, "category": cat_name}]
 
-    for li in nav.find_all("li"):
-        a_tag = li.find("a")
-        if not a_tag:
-            continue
-        if cat_name.lower() in a_tag.get_text(strip=True).lower():
-            nested_ul = li.find("ul")
-            if nested_ul:
-                for sub_li in nested_ul.find_all("li"):
-                    sub_a = sub_li.find("a")
-                    if sub_a:
-                        sub_name = sub_a.get_text(strip=True)
-                        sub_href = sub_a.get("href", "")
-                        sub_url = resolve_url(sub_href)
-                        if sub_url and sub_name:
-                            subcategories.append({
-                                "name": sub_name,
-                                "url": sub_url,
-                                "category": cat_name
-                            })
+    subcategories = []
+
+    # Subcategories are also in <ul class="nav flex-column"> on the category page
+    nav = soup.find("ul", class_="flex-column")
+    if nav:
+        for a in nav.find_all("a", href=True):
+            href = a.get("href", "")
+            sub_name = a.get_text(strip=True)
+            # Subcategory links go deeper than the category
+            if "e-commerce/static" in href and cat_name.lower() in href.lower():
+                sub_url = resolve_url(href)
+                if sub_url and sub_name and sub_url != cat_url:
+                    subcategories.append({
+                        "name": sub_name,
+                        "url": sub_url,
+                        "category": cat_name
+                    })
 
     if not subcategories:
         subcategories = [{"name": cat_name, "url": cat_url, "category": cat_name}]
