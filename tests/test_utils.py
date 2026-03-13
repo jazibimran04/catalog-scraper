@@ -11,14 +11,14 @@ def test_clean_price():
     assert clean_price(None) is None
     assert clean_price("") is None
     assert clean_price("abc") is None
-    print("✓ test_clean_price passed")
+    print("test_clean_price passed")
 
 
 def test_clean_text():
     assert clean_text("  hello  world  ") == "hello world"
     assert clean_text(None) == ""
     assert clean_text("") == ""
-    print("✓ test_clean_text passed")
+    print(" test_clean_text passed")
 
 
 def test_resolve_url():
@@ -26,7 +26,7 @@ def test_resolve_url():
     result = resolve_url("/test-sites/e-commerce/static/computers", base)
     assert result.startswith("https://webscraper.io")
     assert "computers" in result
-    print("✓ test_resolve_url passed")
+    print(" test_resolve_url passed")
 
 
 def test_deduplicate():
@@ -38,7 +38,7 @@ def test_deduplicate():
     unique, removed = deduplicate(products)
     assert len(unique) == 2
     assert removed == 1
-    print("✓ test_deduplicate passed")
+    print(" test_deduplicate passed")
 
 
 if __name__ == "__main__":
